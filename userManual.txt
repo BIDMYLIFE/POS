@@ -1,0 +1,1 @@
+root@charles-VirtualBox:/home/charles/Documents/VSprojects/POS# npm run dev
