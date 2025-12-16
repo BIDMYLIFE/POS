@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { ShoppingCart, Plus, Minus, Trash2, DollarSign, Package, BarChart3, Search, X } from 'lucide-react';
-import axios from 'axios';
+
 export default function RetailPOS() {
     const [cart, setCart] = useState([]);
     const [products, setProducts] = useState([
@@ -38,7 +38,7 @@ export default function RetailPOS() {
     const [transactions, setTransactions] = useState([]);
     const [showReceipt, setShowReceipt] = useState(false);
     const [lastReceipt, setLastReceipt] = useState(null);
-    const barcodeRef = useRef<HTMLInputElement>(null); // hidden input
+
     const categories = ['All', ...new Set(products.map(p => p.category))];
 
     const filteredProducts = products.filter(p => {
@@ -47,31 +47,6 @@ export default function RetailPOS() {
         const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });
-
-    // Focus hidden barcode input on mount
-    useEffect(() => {
-        barcodeRef.current?.focus();
-    }, []);
-
-    // Optional: refocus after each cart action
-    useEffect(() => {
-        const handleClick = () => barcodeRef.current?.focus();
-        window.addEventListener('click', handleClick);
-        return () => window.removeEventListener('click', handleClick);
-    }, []);
-
-    // Handle barcode scanning
-    const handleBarcodeInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            const barcode = e.currentTarget.value.trim();
-            if (!barcode) return;
-
-            const product = products.find(p => p.barcode === barcode);
-            if (product) addToCart(product);
-
-            e.currentTarget.value = ''; // clear input after scan
-        }
-    };
 
     const addToCart = (product) => {
         const existing = cart.find(item => item.id === product.id);
@@ -149,14 +124,6 @@ export default function RetailPOS() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-            {/* Hidden input for barcode scanning */}
-            {/* <input
-                type="text"
-                ref={barcodeRef}
-                onKeyDown={handleBarcodeInput}
-                className="absolute opacity-0 pointer-events-none"
-                autoFocus
-            /> */}
             <div className="bg-black/30 backdrop-blur-sm border-b border-white/10">
                 <div className="max-w-7xl mx-auto px-4 py-4">
                     <div className="flex items-center justify-between">
@@ -215,20 +182,9 @@ export default function RetailPOS() {
                                             placeholder="Search products or scan barcode..."
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter') {
-                                                    const barcode = e.currentTarget.value.trim();
-                                                    const product = products.find(p => p.barcode === barcode);
-                                                    if (product) {
-                                                        addToCart(product);
-                                                        setSearchTerm(''); // clear input after scan
-                                                    }
-                                                }
-                                            }}
                                             className="w-full pl-10 pr-4 py-3 bg-black/30 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-purple-500"
                                         />
                                     </div>
-
                                     <div className="flex gap-2 overflow-x-auto pb-2">
                                         {categories.map(cat => (
                                             <button
@@ -510,34 +466,12 @@ export default function RetailPOS() {
                         <div className="mt-6 text-center text-sm text-gray-500">
                             <p>Thank you for your purchase!</p>
                         </div>
-                        <div className="mt-6 flex gap-4">
-                            <button
-                                onClick={async () => {
-                                    if (!lastReceipt) return;
-                                    try {
-                                        await axios.post('/posSave', lastReceipt);
-                                        alert('Receipt saved successfully!');
-                                        setShowReceipt(false);
-                                    } catch (error) {
-                                        console.error(error);
-                                        alert('Failed to save receipt.');
-                                    }
-                                }}
-                                className="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-all"
-                            >
-                                Save
-                            </button>
-                            <div className="mt-6 flex gap-4">
-                                <button
-                                    onClick={() => setShowReceipt(false)}
-                                    className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 transition-all"
-                                >
-                                    Close
-                                </button>
-                            </div>
-
-                        </div>
-
+                        <button
+                            onClick={() => setShowReceipt(false)}
+                            className="w-full mt-6 bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700"
+                        >
+                            Close
+                        </button>
                     </div>
                 </div>
             )}
