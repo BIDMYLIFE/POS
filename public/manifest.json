@@ -1,0 +1,15 @@
+{
+    "short_name": "POS",
+    "name": "Retail POS System",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#000000",
+    "icons": [
+        {
+            "src": "favicon.ico",
+            "sizes": "32x32 64x64 128x128",
+            "type": "image/x-icon"
+        }
+    ]
+}
