@@ -3,33 +3,7 @@ import { ShoppingCart, Plus, Minus, Trash2, DollarSign, Package, BarChart3, Sear
 import axios from 'axios';
 export default function RetailPOS() {
     const [cart, setCart] = useState([]);
-    const [products, setProducts] = useState([
-        // CPUs
-        { id: 1, name: 'Intel Core i9-13900K', price: 589.99, stock: 12, barcode: 'CPU001', category: 'CPUs' },
-        { id: 2, name: 'AMD Ryzen 9 7950X', price: 549.99, stock: 15, barcode: 'CPU002', category: 'CPUs' },
-        { id: 3, name: 'Intel Core i7-13700K', price: 409.99, stock: 20, barcode: 'CPU003', category: 'CPUs' },
-        { id: 4, name: 'AMD Ryzen 7 7800X3D', price: 449.99, stock: 18, barcode: 'CPU004', category: 'CPUs' },
-        // Motherboards
-        { id: 5, name: 'ASUS ROG Maximus Z790', price: 599.99, stock: 8, barcode: 'MB001', category: 'Motherboards' },
-        { id: 6, name: 'MSI MAG B650 Tomahawk', price: 249.99, stock: 14, barcode: 'MB002', category: 'Motherboards' },
-        { id: 7, name: 'Gigabyte X670 AORUS Elite', price: 329.99, stock: 10, barcode: 'MB003', category: 'Motherboards' },
-        { id: 8, name: 'ASRock B760M Pro', price: 159.99, stock: 22, barcode: 'MB004', category: 'Motherboards' },
-        // RAM
-        { id: 9, name: 'Corsair Vengeance DDR5 32GB', price: 159.99, stock: 30, barcode: 'RAM001', category: 'RAM' },
-        { id: 10, name: 'G.Skill Trident Z5 RGB 64GB', price: 299.99, stock: 15, barcode: 'RAM002', category: 'RAM' },
-        { id: 11, name: 'Kingston Fury Beast 16GB', price: 79.99, stock: 45, barcode: 'RAM003', category: 'RAM' },
-        { id: 12, name: 'Crucial DDR4 32GB Kit', price: 89.99, stock: 40, barcode: 'RAM004', category: 'RAM' },
-        // Graphics Cards
-        { id: 13, name: 'NVIDIA RTX 4090', price: 1599.99, stock: 5, barcode: 'GPU001', category: 'Graphics Cards' },
-        { id: 14, name: 'AMD RX 7900 XTX', price: 999.99, stock: 8, barcode: 'GPU002', category: 'Graphics Cards' },
-        { id: 15, name: 'NVIDIA RTX 4070 Ti', price: 799.99, stock: 12, barcode: 'GPU003', category: 'Graphics Cards' },
-        { id: 16, name: 'AMD RX 7800 XT', price: 499.99, stock: 16, barcode: 'GPU004', category: 'Graphics Cards' },
-        // Storage
-        { id: 17, name: 'Samsung 990 PRO 2TB', price: 189.99, stock: 25, barcode: 'SSD001', category: 'Storage' },
-        { id: 18, name: 'WD Black SN850X 1TB', price: 119.99, stock: 35, barcode: 'SSD002', category: 'Storage' },
-        { id: 19, name: 'Crucial P5 Plus 500GB', price: 59.99, stock: 50, barcode: 'SSD003', category: 'Storage' },
-        { id: 20, name: 'Seagate BarraCuda 4TB HDD', price: 89.99, stock: 20, barcode: 'HDD001', category: 'Storage' },
-    ]);
+    const [products, setProducts] = useState<any[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [activeTab, setActiveTab] = useState('pos');
@@ -51,6 +25,21 @@ export default function RetailPOS() {
     // Focus hidden barcode input on mount
     useEffect(() => {
         barcodeRef.current?.focus();
+    }, []);
+
+    // Load products from backend API (uses Vite proxy when running dev)
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const res = await axios.get('/products');
+                // backend returns price as number/string depending on serializer
+                setProducts(res.data || []);
+            } catch (err) {
+                console.error('Failed to load products', err);
+            }
+        };
+
+        fetchProducts();
     }, []);
 
     // Optional: refocus after each cart action
@@ -515,7 +504,7 @@ export default function RetailPOS() {
                                 onClick={async () => {
                                     if (!lastReceipt) return;
                                     try {
-                                        await axios.post('http://localhost:8080/pos/posSave', lastReceipt);
+                                        await axios.post('/pos/posSave', lastReceipt);
                                         alert('Receipt saved successfully!');
                                         setShowReceipt(false);
                                     } catch (error) {
