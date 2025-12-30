@@ -362,6 +362,7 @@ export default function RetailPOS() {
                                         <th className="text-left py-3 px-4 text-white/70 font-medium">Category</th>
                                         <th className="text-left py-3 px-4 text-white/70 font-medium">Name</th>
                                         <th className="text-left py-3 px-4 text-white/70 font-medium">Price</th>
+                                        <th className="text-left py-3 px-4 text-white/70 font-medium">Cost</th>
                                         <th className="text-left py-3 px-4 text-white/70 font-medium">Stock</th>
                                         <th className="text-left py-3 px-4 text-white/70 font-medium">Barcode</th>
                                     </tr>
@@ -377,6 +378,7 @@ export default function RetailPOS() {
                                             </td>
                                             <td className="py-3 px-4 text-white font-medium">{product.name}</td>
                                             <td className="py-3 px-4 text-white">${product.price}</td>
+                                            <td className="py-3 px-4 text-white">${product.cost}</td>
                                             <td className="py-3 px-4">
                                                 <span className={`px-2 py-1 rounded ${product.stock < 10 ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'
                                                     }`}>
