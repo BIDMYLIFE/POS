@@ -515,7 +515,7 @@ export default function RetailPOS() {
                                 onClick={async () => {
                                     if (!lastReceipt) return;
                                     try {
-                                        await axios.post('/posSave', lastReceipt);
+                                        await axios.post('http://localhost:8080/pos/posSave', lastReceipt);
                                         alert('Receipt saved successfully!');
                                         setShowReceipt(false);
                                     } catch (error) {
